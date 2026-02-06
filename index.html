@@ -475,16 +475,16 @@ tw-link:active, .enchantment-link:active{
 <div class="pp-divider"></div>
 
 Objective:
-''Find the Teacher.''
+''Find the Chess Teacher.''
 
-A rumor says… when $name blushes, she kicks her legs in the air.
+A rumor says… when Penguin blushes, she kicks her legs in the air.
 Science must verify this.
 
 [[Begin the highly serious investigation-&gt;BlushDetector]]
 
 (link: "🎧 Open songs &amp; vibes")[ [[Go-&gt;Songs]] ]
 
-//Warning: contains intentional cringe. Self-aware cringe.//</tw-passagedata><tw-passagedata pid="3" name="choose vibe" tags="" position="425,300" size="100,100">&#39;&#39;MISSION UPDATE:&#39;&#39; The Teacher can be lured using one of three sacred rituals.
+//Warning: contains intentional cringe. Self-aware cringe.//</tw-passagedata><tw-passagedata pid="3" name="choose vibe" tags="" position="425,300" size="100,100">&#39;&#39;MISSION UPDATE:&#39;&#39; The Chess Teacher, and i mean a good chess teacher can be lured using one of three sacred rituals.
 
 Pick your route, $name:
 
@@ -521,7 +521,7 @@ A slow piano note plays.
 Someone’s scarf flutters dramatically (even if nobody is wearing one).
 
 A narrator whispers:
-&#39;&#39;“When $name blushes… the legs kick. And when the legs kick… feelings are near.”&#39;&#39;
+&#39;&#39;“When Penguin blushes… the legs kick. And when the legs kick… feelings are near. Click below thrice, not more than that, try it you will see. and i know you will try, naughty penguin”&#39;&#39;
 
 (set: $hold to 0)
 
@@ -567,7 +567,7 @@ A narrator whispers:
   ]
 ]</tw-passagedata><tw-passagedata pid="5" name="crochet mini" tags="" position="575,300" size="100,100">&#39;&#39;CROCHET MINI:&#39;&#39; Pattern unlock required.
 
-$name opens a tiny crochet pouch.
+Penguin opens a tiny crochet pouch.
 Inside: a note that says… “complete the stitch sequence to continue.”
 Because of course.
 
@@ -619,7 +619,7 @@ You must click the stitches in order:
 Mission status:
 ✅ Blush confirmed  
 ✅ Keys collected: $keys  
-✅ Teacher located: &#39;&#39;$name&#39;&#39;
+✅ Chess Teacher located: &#39;&#39;$name&#39;&#39;
 
 So here’s the truth.
 
@@ -743,14 +743,17 @@ Okay. This is the part of the song where everything gets honest.
 The dramatic build-up.
 The //bridge//.
 
-A line appears on the screen like an easter egg.
+I don't listen to TS much but i can quote one or two
+  right now the one that comes to my mind....
+  its a love story...
+  baby just say YESS!
 
 (set: $bridge to 0)
 
 (link-repeat: &quot;🎶 Tap the beat&quot;)[
   (set: $bridge to $bridge + 1)
 
-  (if: $bridge is 1)[“If this was a K-drama…” ]
+  (if: $bridge is 1)[“so beacuse you choose k drama” ]
   (else-if: $bridge is 2)[“…this is the moment the camera zooms in…” ]
   (else-if: $bridge is 3)[“…and the soundtrack gets unfairly perfect.” ]
   (else:)[Okay okay, you’re remixing it now. ]
@@ -759,13 +762,13 @@ A line appears on the screen like an easter egg.
 (link-repeat: &quot;🪩 Whisper: ‘hi, it’s me…’&quot;)[
   (set: $bridge to $bridge + 1)
   (if: $bridge &lt; 3)[You say it quietly. The universe leans closer.]
-  (else:)[You say it and the scene immediately becomes 12% more iconic.]
+  (else:)[You say it and the scene immediately becomes 3000% more iconic.]
 ]
 
 (link-repeat: &quot;🧩 Reveal the hidden line&quot;)[
   (if: $bridge &gt;= 3)[
     ---
-    &#39;&#39;Easter egg unlocked:&#39;&#39;
+    &#39;&#39;so are you ready to say yes?? &#39;&#39;
 
     (if: $route is &quot;chai&quot;)[“Meet me where the chai is warm.”]
     (if: $route is &quot;sunset&quot;)[“Meet me where the sky turns gold.”]
