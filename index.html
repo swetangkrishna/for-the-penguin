@@ -686,21 +686,14 @@ Choose your ending:
 ---
 Here’s a message you can send:
 
-(set: $msg to &quot;&quot;)
-(if: $plan is &quot;coffee&quot;)[
-  (set: $msg to &quot;Okay fine 😭 I’ll be your better teacher. Coffee this week? When are you free, and where are we going? 🐧☕&quot;)
-]
-(else-if: $plan is &quot;sunset&quot;)[
-  (set: $msg to &quot;Penguin approves. Beach + sunset this week? Tell me the day and I’ll show up pretending I’m not excited 🌅🐧&quot;)
-]
-(else-if: $plan is &quot;movie&quot;)[
-  (set: $msg to &quot;Deal. Movie date. But if it’s bad, we’re blaming you as my ‘teacher’ 😌🎬🐧 When?&quot;)
-]
-(else-if: $plan is &quot;cringe&quot;)[
-  (set: $msg to &quot;Okay… this is painfully cringe but I’m saying yes. Take me out this week, Teacher. (Leg-kick activated.) 🐧😳&quot;)
-]
-(else:)[
-  (set: $msg to &quot;I’m shy 😭 but… yes. Let’s do something this week. You pick: coffee, sunset, or movie? 🐧&quot;)
+(set: $msg to "")
+... your (if:) blocks that set $msg ...
+
+(set: $wa to "9715XXXXXXXX")
+(set: $waLink to "https://wa.me/" + $wa + "?text=" + (urlencode: $msg))
+
+(link: "📲 Send on WhatsApp")[
+  (open-url: $waLink)
 ]
 
 &lt;textarea rows=4 cols=40&gt;[
