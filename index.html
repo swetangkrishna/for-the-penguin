@@ -252,7 +252,7 @@ tw-link:active, .enchantment-link:active{
   transition: transform .12s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
-.pp-ask-btn:hover{
+.pp-final-ask .pp-ask-btn:hover{
   background: rgba(255,255,255,.10);
   border-color: rgba(255,255,255,.28);
   box-shadow: 0 10px 30px rgba(0,0,0,.28);
@@ -531,8 +531,8 @@ tw-link:active, .enchantment-link:active{
 
       // Click reactions (optional but fun)
       yes.addEventListener("click", (e) => {
-        toast("🐧 YES accepted. Penguin is happy.");
-        floatEmoji(e.clientX, e.clientY, "💗");
+      toast("now text me asap. i am waiting");
+      floatEmoji(e.clientX, e.clientY, "💗");
       });
 
       no.addEventListener("click", (e) => {
@@ -585,7 +585,7 @@ tw-link:active, .enchantment-link:active{
     hookLinkEffects();
     observePassages(); setupFinalAsk();
     forceStartIfNeeded();
-    setTimeout(() => { updateHUD(); injectStartExtras(); }, 150); setupFinalAsk();
+    setTimeout(() => { updateHUD(); injectStartExtras(); setupFinalAsk(); }, 150);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
