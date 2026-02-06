@@ -231,6 +231,11 @@ tw-link:active, .enchantment-link:active{
 /* Penguin Protocol enhancements (Harlowe-safe) */
 (function () {
   const PP = {
+  window.PP_openWhatsApp = function(number, message) {
+  const num = String(number).replace(/\D/g, "");
+  const text = encodeURIComponent(message || "");
+  window.open("https://wa.me/" + num + "?text=" + text, "_blank");
+};
     audio: null,
     playlist: [
       { title: "Penguin Protocol (Lo‑fi Intro)", src: "assets/lofi-intro.mp3", note: "Warm intro vibe." },
@@ -667,20 +672,20 @@ Choose your ending:
   [[Proceed-&gt;plan it]]
 ]</tw-passagedata><tw-passagedata pid="7" name="plan it" tags="" position="575,550" size="100,100">&#39;&#39;PLAN IT&#39;&#39;
 
-(if: $plan is &quot;coffee&quot;)[
-  You chose coffee. Cute. Dangerous. Effective.
+(if: $plan is "coffee")[
+  (set: $msg to "Okay fine 😭 I’ll be your better teacher. Coffee this week? When are you free, and where are we going? 🐧☕")
 ]
-(else-if: $plan is &quot;sunset&quot;)[
-  You chose sunset. That’s illegal levels of romantic.
+(else-if: $plan is "sunset")[
+  (set: $msg to "Penguin approves. Beach + sunset this week? Tell me the day and I’ll show up pretending I’m not excited 🌅🐧")
 ]
-(else-if: $plan is &quot;movie&quot;)[
-  You chose movie. I will pretend to watch the film.
+(else-if: $plan is "movie")[
+  (set: $msg to "Deal. Movie date. But if it’s bad, we’re blaming you as my ‘teacher’ 😌🎬🐧 When?")
 ]
-(else-if: $plan is &quot;cringe&quot;)[
-  You chose sarcastically cringe. Which is… extremely on brand.
+(else-if: $plan is "cringe")[
+  (set: $msg to "Okay… this is painfully cringe but I’m saying yes. Take me out this week, Teacher. (Leg-kick activated.) 🐧😳")
 ]
 (else:)[
-  Shy is valid. Leg-kicks are valid. We proceed gently. 🙂
+  (set: $msg to "I’m shy 😭 but… yes. Let’s do something this week. You pick: coffee, sunset, or movie? 🐧")
 ]
 
 ---
@@ -689,12 +694,13 @@ Here’s a message you can send:
 (set: $msg to "")
 ... your (if:) blocks that set $msg ...
 
-(set: $wa to "9715XXXXXXXX")
-(set: $waLink to "https://wa.me/" + $wa + "?text=" + (urlencode: $msg))
+<textarea id="planText" rows=4 cols=40 readonly>(print: $msg)</textarea>
 
-(link: "📲 Send on WhatsApp")[
-  (open-url: $waLink)
-]
+<button onclick="PP_openWhatsApp('353894880807', document.getElementById('planText').value)">
+  📲 Send on WhatsApp
+</button>
+
+
 
 &lt;textarea rows=4 cols=40&gt;[
 (print: $msg)
