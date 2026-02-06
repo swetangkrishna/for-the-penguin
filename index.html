@@ -227,6 +227,41 @@ tw-link:active, .enchantment-link:active{
   letter-spacing: .14em;
   opacity:.85;
 }
+/* --- Final Ask (Yes/No) --- */
+.pp-final-ask{
+  position: relative;
+  height: 140px;
+  margin-top: .75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.12);
+  overflow: hidden;
+}
+
+.pp-ask-btn{
+  position: absolute;
+  padding: .55rem .95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+  transform: translate3d(0,0,0);
+  transition: transform .12s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.pp-ask-btn:hover{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 10px 30px rgba(0,0,0,.28);
+  transform: translate3d(0,-1px,0);
+}
+
+.pp-ask-btn:active{
+  transform: translate3d(0,0,0) scale(.98);
+}
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">
 /* Penguin Protocol enhancements (Harlowe-safe) */
 (function () {
@@ -450,13 +485,107 @@ tw-link:active, .enchantment-link:active{
       });
     }
   }
+  function setupFinalAsk() {
+    // Only run on the "plan it" passage
+    if (currentPassageName() !== "plan it") return;
 
+    const wrap = document.querySelector("#ppFinalAsk");
+    if (!wrap || wrap.dataset.bound === "1") return;
+    wrap.dataset.bound = "1";
+
+    const yes = wrap.querySelector(".pp-yes");
+    const no = wrap.querySelector(".pp-no");
+    if (!yes || !no) return;
+
+    // Initial positions (in pixels, within the container)
+    const pad = 14;
+    const rect = () => wrap.getBoundingClientRect();
+
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+    function lerp(a, b, t){ return a + (b - a) * t; }
+
+    // Place buttons after layout is ready
+    requestAnimationFrame(() => {
+      const r = rect();
+      const yw = yes.offsetWidth, yh = yes.offsetHeight;
+      const nw = no.offsetWidth,  nh = no.offsetHeight;
+
+      let yesPos = { x: pad, y: r.height/2 - yh/2 };
+      let noPos  = { x: r.width - nw - pad, y: r.height/2 - nh/2 };
+
+      function applyPos() {
+        yes.style.left = yesPos.x + "px";
+        yes.style.top  = yesPos.y + "px";
+        no.style.left  = noPos.x + "px";
+        no.style.top   = noPos.y + "px";
+      }
+
+      function randomJumpNo() {
+        const r2 = rect();
+        noPos.x = clamp(Math.random() * (r2.width - nw - pad*2) + pad, pad, r2.width - nw - pad);
+        noPos.y = clamp(Math.random() * (r2.height - nh - pad*2) + pad, pad, r2.height - nh - pad);
+        applyPos();
+      }
+
+      applyPos();
+
+      // Click reactions (optional but fun)
+      yes.addEventListener("click", (e) => {
+        toast("🐧 YES accepted. Penguin is happy.");
+        floatEmoji(e.clientX, e.clientY, "💗");
+      });
+
+      no.addEventListener("click", (e) => {
+        toast("Nice try 😌");
+        floatEmoji(e.clientX, e.clientY, "🏃‍♂️");
+        randomJumpNo();
+      });
+
+      // Make "No" run away, and "Yes" follow when you approach "No"
+      wrap.addEventListener("pointermove", (e) => {
+        const r2 = rect();
+        const mx = e.clientX - r2.left;
+        const my = e.clientY - r2.top;
+
+        const noCx = noPos.x + nw/2;
+        const noCy = noPos.y + nh/2;
+
+        const dx = mx - noCx;
+        const dy = my - noCy;
+        const dist = Math.hypot(dx, dy);
+
+        // When cursor gets near "No", it escapes
+        if (dist < 140) {
+          const ux = dx / (dist || 1);
+          const uy = dy / (dist || 1);
+
+          // push "No" away from cursor
+          noPos.x -= ux * 26;
+          noPos.y -= uy * 22;
+
+          // clamp within container
+          noPos.x = clamp(noPos.x, pad, r2.width - nw - pad);
+          noPos.y = clamp(noPos.y, pad, r2.height - nh - pad);
+
+          // "Yes" follows your attempt (moves toward cursor)
+          yesPos.x = clamp(lerp(yesPos.x, mx - yw/2, 0.25), pad, r2.width - yw - pad);
+          yesPos.y = clamp(lerp(yesPos.y, my - yh/2, 0.25), pad, r2.height - yh - pad);
+
+          applyPos();
+        }
+      });
+
+      // Extra: if the cursor actually enters "No", it jumps instantly
+      no.addEventListener("pointerenter", () => randomJumpNo());
+    });
+  }
+  
   function init() {
     ensureHUD();
     hookLinkEffects();
-    observePassages();
+    observePassages(); setupFinalAsk();
     forceStartIfNeeded();
-    setTimeout(() => { updateHUD(); injectStartExtras(); }, 150);
+    setTimeout(() => { updateHUD(); injectStartExtras(); }, 150); setupFinalAsk();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
@@ -684,31 +813,13 @@ Choose your ending:
 ]
 
 ---
-Here’s a message you can send:
+Will you go out to my penguin?
 
-(set: $msg to &quot;&quot;)
-(if: $plan is &quot;coffee&quot;)[
-  (set: $msg to &quot;Okay fine 😭 I’ll be your better teacher. Coffee this week? When are you free, and where are we going? 🐧☕&quot;)
-]
-(else-if: $plan is &quot;sunset&quot;)[
-  (set: $msg to &quot;Penguin approves. Beach + sunset this week? Tell me the day and I’ll show up pretending I’m not excited 🌅🐧&quot;)
-]
-(else-if: $plan is &quot;movie&quot;)[
-  (set: $msg to &quot;Deal. Movie date. But if it’s bad, we’re blaming you as my ‘teacher’ 😌🎬🐧 When?&quot;)
-]
-(else-if: $plan is &quot;cringe&quot;)[
-  (set: $msg to &quot;Okay… this is painfully cringe but I’m saying yes. Take me out this week, Teacher. (Leg-kick activated.) 🐧😳&quot;)
-]
-(else:)[
-  (set: $msg to &quot;I’m shy 😭 but… yes. Let’s do something this week. You pick: coffee, sunset, or movie? 🐧&quot;)
-]
-
-&lt;textarea rows=4 cols=40&gt;[
-$msg
-]&lt;/textarea&gt;
-
-&#39;&#39;Instructions:&#39;&#39; Tap inside the box → Select All → Copy → paste to me.
-
+<div class="pp-final-ask" id="ppFinalAsk">
+  <button class="pp-ask-btn pp-yes" type="button">Yes</button>
+  <button class="pp-ask-btn pp-no" type="button">No</button>
+</div>
+  
 ---
 [[Change my choice-&gt;final reveal]]
 [[Replay from the beginning-&gt;Start]]</tw-passagedata><tw-passagedata pid="8" name="BlushDetector" tags="" position="300,300" size="100,100">&#39;&#39;BLUSH DETECTOR: ONLINE&#39;&#39;
