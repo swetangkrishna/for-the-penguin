@@ -646,67 +646,69 @@ You picked the movie route, which tells me you like stories… so here’s mine.
 ---
 Choose your ending:
 
-(link: &quot;☕ YES — coffee date&quot;)[
-  (set: $plan to &quot;coffee&quot;)
-  [[Proceed-&gt;plan it]]
-]
-
-(link: &quot;🌅 YES — beach sunset&quot;)[
-  (set: $plan to &quot;sunset&quot;)
-  [[Proceed-&gt;plan it]]
-]
-
-(link: &quot;🎬 YES — movie date&quot;)[
-  (set: $plan to &quot;movie&quot;)
-  [[Proceed-&gt;plan it]]
-]
-
-(link: &quot;😳 YES — but make it sarcastically cringe&quot;)[
-  (set: $plan to &quot;cringe&quot;)
-  [[Proceed-&gt;plan it]]
-]
-
-(link: &quot;🙈 I’m shy (kick legs and run)&quot;)[
-  You can be shy. I’ll still be here, smiling like an idiot.
-  (set: $plan to &quot;shy&quot;)
-  [[Proceed-&gt;plan it]]
-]</tw-passagedata><tw-passagedata pid="7" name="plan it" tags="" position="575,550" size="100,100">&#39;&#39;PLAN IT&#39;&#39;
-
-(if: $plan is "coffee")[
-  (set: $msg to "Okay fine 😭 I’ll be your better teacher. Coffee this week? When are you free, and where are we going? 🐧☕")
-]
-(else-if: $plan is "sunset")[
-  (set: $msg to "Penguin approves. Beach + sunset this week? Tell me the day and I’ll show up pretending I’m not excited 🌅🐧")
-]
-(else-if: $plan is "movie")[
-  (set: $msg to "Deal. Movie date. But if it’s bad, we’re blaming you as my ‘teacher’ 😌🎬🐧 When?")
-]
-(else-if: $plan is "cringe")[
-  (set: $msg to "Okay… this is painfully cringe but I’m saying yes. Take me out this week, Teacher. (Leg-kick activated.) 🐧😳")
-]
-(else:)[
-  (set: $msg to "I’m shy 😭 but… yes. Let’s do something this week. You pick: coffee, sunset, or movie? 🐧")
-]
-
 ---
-Here’s a message you can send:
+<div class="pp-askwrap" id="ppAsk">
+  <div class="pp-askq">Will you go out with me?</div>
+  <div class="pp-askbtns">
+    <button class="pp-btn pp-primary" id="ppYes">Yes 💘</button>
+    <button class="pp-btn" id="ppNo">No 🙃</button>
+  </div>
+  <div class="small" style="margin-top:10px; opacity:.85;">
+    (Try clicking “No”. It might be shy.)
+  </div>
+</div>
 
-(set: $msg to "")
-... your (if:) blocks that set $msg ...
+<div id="ppNext" style="display:none; margin-top:14px;">
+(link: "☕ YES — coffee date")[(set: $plan to "coffee")[[Proceed->plan it]]]
+(link: "🌅 YES — beach sunset")[(set: $plan to "sunset")[[Proceed->plan it]]]
+(link: "🎬 YES — movie date")[(set: $plan to "movie")[[Proceed->plan it]]]
+(link: "😳 YES — sarcastically cringe")[(set: $plan to "cringe")[[Proceed->plan it]]]
+</div>
 
-<textarea id="planText" rows=4 cols=40 readonly>(print: $msg)</textarea>
+<script>
+(function(){
+  const yes = document.getElementById('ppYes');
+  const no  = document.getElementById('ppNo');
+  const next = document.getElementById('ppNext');
+  const wrap = document.getElementById('ppAsk');
+  if(!yes || !no || !next || !wrap) return;
 
-<button onclick="PP_openWhatsApp('353894880807', document.getElementById('planText').value)">
-  📲 Send on WhatsApp
-</button>
+  const showNext = () => { next.style.display = 'block'; };
 
+  yes.addEventListener('click', showNext);
 
+  let dodges = 0;
+  const dodge = () => {
+    dodges++;
+    const rect = wrap.getBoundingClientRect();
+    const maxX = Math.max(0, rect.width - 120);
+    const maxY = Math.max(0, rect.height - 48);
+    no.style.position = 'absolute';
+    no.style.left = (Math.random() * maxX) + 'px';
+    no.style.top  = (40 + Math.random() * maxY) + 'px';
 
-&lt;textarea rows=4 cols=40&gt;[
-(print: $msg)
-]&lt;/textarea&gt;
+    if (dodges >= 5) {
+      no.textContent = "Yes (fine) 😌";
+      no.classList.add('pp-primary');
+      no.onclick = showNext;
+      no.onmouseenter = null;
+    }
+  };
 
-&#39;&#39;Instructions:&#39;&#39; Tap inside the box → Select All → Copy → paste to me.
+  no.addEventListener('mouseenter', dodge);
+  no.addEventListener('touchstart', function(e){ e.preventDefault(); dodge(); }, {passive:false});
+
+  setTimeout(() => {
+    if(!no.classList.contains('pp-primary')){
+      no.textContent = "Yes (ok) 💞";
+      no.classList.add('pp-primary');
+      no.style.position = 'static';
+      no.onclick = showNext;
+      no.onmouseenter = null;
+    }
+  }, 5000);
+})();
+</script>
 
 ---
 [[Change my choice-&gt;final reveal]]
