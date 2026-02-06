@@ -11,7 +11,7 @@ title="Twine CSS">@keyframes appear{0%{opacity:0}to{opacity:1}}@keyframes fade-i
 <body>
 <tw-story><noscript><tw-noscript>JavaScript needs to be enabled to play find the teacher, penguin.</tw-noscript></noscript></tw-story>
 <tw-storydata name="find the teacher, penguin" startnode="2" creator="Twine" creator-version="2.11.1" format="Harlowe" format-version="3.3.9" ifid="973A9B04-CB1F-48BD-BA4D-BF14B80C4411" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">
-/* --- Penguin Protocol Theme --- */
+
 :root{
   --pp-accent: #ff7bd0;
   --pp-accent2:#5fe1ff;
@@ -89,7 +89,6 @@ tw-link:active, .enchantment-link:active{
   transform: translateY(0px) scale(.98);
 }
 
-/* Small “terminal tag” */
 .pp-chip{
   display:inline-flex;
   align-items:center;
@@ -142,8 +141,12 @@ tw-link:active, .enchantment-link:active{
 .pp-hud > *{ pointer-events:auto; }
 
 .pp-btn{
+  border:1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.08);
+  padding:10px 14px;
+  border-radius:14px;
   cursor:pointer;
-  user-select:none;
+  font-weight:700;
 }
 
 .pp-modal{
@@ -229,14 +232,6 @@ tw-link:active, .enchantment-link:active{
   opacity:.85;
 }
 
-.pp-btn{
-  border:1px solid rgba(255,255,255,.15);
-  background: rgba(255,255,255,.08);
-  padding:10px 14px;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:700;
-}
 .pp-btn:hover{ background: rgba(255,255,255,.12); }
 .pp-primary{
   background: rgba(124,92,255,.95);
@@ -251,6 +246,7 @@ tw-link:active, .enchantment-link:active{
 }
 .pp-askq{ font-size:22px; font-weight:900; margin-bottom:8px; }
 .pp-askbtns{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">
 /* Penguin Protocol enhancements (Harlowe-safe) */
 (function () {
