@@ -228,13 +228,11 @@ tw-link:active, .enchantment-link:active{
   opacity:.85;
 }
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">
-/* Penguin Protocol enhancements (Harlowe) */
+/* Penguin Protocol enhancements (Harlowe-safe) */
 (function () {
   const PP = {
     audio: null,
     playlist: [
-      // Put your own audio files in /assets and update these paths.
-      // Keep them royalty-free or your own uploads.
       { title: "Penguin Protocol (Lo‑fi Intro)", src: "assets/lofi-intro.mp3", note: "Warm intro vibe." },
       { title: "Sunset Route (Ambient)", src: "assets/sunset-ambient.mp3", note: "Golden-hour glow." },
       { title: "Chai Route (Cozy)", src: "assets/chai-cozy.mp3", note: "Cozy + playful." },
@@ -275,29 +273,34 @@ tw-link:active, .enchantment-link:active{
     setTimeout(() => f.remove(), 900);
   }
 
-  function getVar(name) {
-    try {
-      return window.State && State.variables ? State.variables[name] : undefined;
-    } catch (e) { return undefined; }
+  function currentPassageName() {
+    const p = document.querySelector("tw-passage");
+    return p ? (p.getAttribute("name") || "") : "";
   }
 
-  function setThemeByRoute() {
-    const route = getVar("route");
-    const story = document.querySelector("tw-story");
-    if (!story) return;
-    story.dataset.route = route || "";
-    if (route === "chai") {
-      story.style.setProperty("--pp-accent", "#ffb36b");
-      story.style.setProperty("--pp-accent2", "#ff7bd0");
-    } else if (route === "sunset") {
-      story.style.setProperty("--pp-accent", "#ff7bd0");
-      story.style.setProperty("--pp-accent2", "#ffd36b");
-    } else if (route === "movie") {
-      story.style.setProperty("--pp-accent", "#5fe1ff");
-      story.style.setProperty("--pp-accent2", "#b26bff");
-    } else {
-      story.style.removeProperty("--pp-accent");
-      story.style.removeProperty("--pp-accent2");
+  // IMPORTANT: Always start at "Start" even if a hash/deeplink was copied.
+  function forceStartIfNeeded() {
+    try {
+      if (sessionStorage.getItem("pp_forced_start") === "1") return;
+      const hasHash = !!(location.hash && location.hash !== "#");
+      const hasPassageParam = /[?&](passage|p)=/i.test(location.search);
+
+      // If someone opened a deep link, strip it so the story opens cleanly.
+      if (hasHash || hasPassageParam) {
+        const cleanUrl = location.origin + location.pathname;
+        history.replaceState(null, "", cleanUrl);
+      }
+
+      // After the engine renders the first passage, jump to Start if needed.
+      setTimeout(() => {
+        const name = currentPassageName();
+        if (name && name !== "Start" && window.Harlowe && typeof window.Harlowe.goToPassage === "function") {
+          sessionStorage.setItem("pp_forced_start", "1");
+          window.Harlowe.goToPassage("Start");
+        }
+      }, 60);
+    } catch (e) {
+      // Never crash the story due to enhancements.
     }
   }
 
@@ -307,7 +310,7 @@ tw-link:active, .enchantment-link:active{
     const left = el("div", { class: "pp-chip" }, [
       el("span", { class: "pp-route", id: "ppRoute" }, ["PENGUIN PROTOCOL"]),
       el("span", { style: "opacity:.7" }, ["•"]),
-      el("span", { id: "ppKeys" }, ["keys: 0"])
+      el("span", { id: "ppWhere" }, ["Start"])
     ]);
 
     const right = el("div", { style: "display:flex; gap:.5rem; align-items:center;" }, [
@@ -349,7 +352,7 @@ tw-link:active, .enchantment-link:active{
     if (!modal || !body) return;
 
     body.innerHTML = `<h3 class="pp-glow">Songs</h3>
-      <div class="pp-sub">Add your own audio files in <code>assets/</code> (mp3/ogg) and update the playlist in Story JavaScript.</div>
+      <div class="pp-sub">Drop your own audio files in <code>assets/</code> (mp3/ogg) and update the playlist in the script.</div>
       <div class="pp-divider"></div>
       <div id="ppPlaylist"></div>
       <audio class="pp-audio" id="ppAudio" controls preload="none"></audio>
@@ -379,22 +382,19 @@ tw-link:active, .enchantment-link:active{
       list.appendChild(row);
     });
 
-    const route = getVar("route");
-    const pick = route === "chai" ? 2 : route === "sunset" ? 1 : route === "movie" ? 3 : 0;
-    PP.current = pick;
-    audio.src = PP.playlist[pick].src;
-    note.textContent = PP.playlist[pick].note || "";
+    PP.current = 0;
+    audio.src = PP.playlist[0].src;
+    note.textContent = PP.playlist[0].note || "";
 
     modal.classList.add("open");
   }
 
   function updateHUD() {
-    const keys = getVar("keys");
-    const route = getVar("route");
-    const rEl = document.getElementById("ppRoute");
-    const kEl = document.getElementById("ppKeys");
-    if (rEl) rEl.textContent = route ? ("route: " + route) : "PENGUIN PROTOCOL";
-    if (kEl) kEl.textContent = "keys: " + (typeof keys === "number" ? keys : 0);
+    const where = document.getElementById("ppWhere");
+    if (where) {
+      const name = currentPassageName() || "…";
+      where.textContent = name;
+    }
   }
 
   function hookLinkEffects() {
@@ -416,7 +416,6 @@ tw-link:active, .enchantment-link:active{
     const story = document.querySelector("tw-story");
     if (!story) return;
     const obs = new MutationObserver(() => {
-      setThemeByRoute();
       updateHUD();
       injectStartExtras();
     });
@@ -456,7 +455,8 @@ tw-link:active, .enchantment-link:active{
     ensureHUD();
     hookLinkEffects();
     observePassages();
-    setTimeout(() => { setThemeByRoute(); updateHUD(); injectStartExtras(); }, 150);
+    forceStartIfNeeded();
+    setTimeout(() => { updateHUD(); injectStartExtras(); }, 150);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
@@ -614,18 +614,7 @@ You must click the stitches in order:
   ]
 ]
 
-(if: $stitch is 3)[
-  ---
-  (set: $keys to $keys + 1)
-
-  &#39;&#39;Key acquired:&#39;&#39; a tiny paper heart falls out.
-
-  (if: $route is &quot;chai&quot;)[It smells faintly like chai and confidence.]
-  (if: $route is &quot;sunset&quot;)[It glows like a sunset… suspiciously romantic.]
-  (if: $route is &quot;movie&quot;)[It pauses dramatically like a K-drama cliffhanger.]
-
-  [[Continue-&gt;k drama moment]]
-]</tw-passagedata><tw-passagedata pid="6" name="final reveal" tags="" position="425,550" size="100,100">&#39;&#39;FINAL REVEAL&#39;&#39;
+</tw-passagedata><tw-passagedata pid="6" name="final reveal" tags="" position="425,550" size="100,100">&#39;&#39;FINAL REVEAL&#39;&#39;
 
 Mission status:
 ✅ Blush confirmed  
