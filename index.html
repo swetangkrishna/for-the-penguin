@@ -9,23 +9,480 @@
 </head>
 <body>
 <tw-story><noscript><tw-noscript>JavaScript needs to be enabled to play find the teacher, penguin.</tw-noscript></noscript></tw-story>
-<tw-storydata name="find the teacher, penguin" startnode="9" creator="Twine" creator-version="2.11.1" format="Harlowe" format-version="3.3.9" ifid="973A9B04-CB1F-48BD-BA4D-BF14B80C4411" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="startup" tags="" position="225,125" size="100,100">(set: $name to &quot;Penguin&quot;)
+<tw-storydata name="find the teacher, penguin" startnode="2" creator="Twine" creator-version="2.11.1" format="Harlowe" format-version="3.3.9" ifid="973A9B04-CB1F-48BD-BA4D-BF14B80C4411" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">
+/* --- Penguin Protocol Theme --- */
+:root{
+  --pp-accent: #ff7bd0;
+  --pp-accent2:#5fe1ff;
+  --pp-bg1:#050510;
+  --pp-bg2:#12001a;
+  --pp-card: rgba(255,255,255,.06);
+  --pp-border: rgba(255,255,255,.14);
+  --pp-text: rgba(255,255,255,.92);
+}
+
+tw-story{
+  background:
+    radial-gradient(1200px 800px at 15% 20%, rgba(255,123,208,.18), transparent 60%),
+    radial-gradient(900px 700px at 85% 25%, rgba(95,225,255,.14), transparent 55%),
+    radial-gradient(1200px 900px at 70% 80%, rgba(255,208,123,.10), transparent 60%),
+    linear-gradient(180deg, var(--pp-bg1), var(--pp-bg2));
+  color: var(--pp-text);
+}
+
+tw-story::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.35) 30%, transparent 60%),
+    radial-gradient(1.5px 1.5px at 35% 55%, rgba(255,255,255,.22) 30%, transparent 60%),
+    radial-gradient(1px 1px at 70% 30%, rgba(255,255,255,.18) 30%, transparent 60%),
+    radial-gradient(1.2px 1.2px at 85% 75%, rgba(255,255,255,.20) 30%, transparent 60%);
+  opacity:.55;
+  animation: ppTwinkle 6s ease-in-out infinite alternate;
+}
+
+@keyframes ppTwinkle{
+  from{filter: blur(0px); opacity:.35}
+  to{filter: blur(.4px); opacity:.7}
+}
+
+tw-passage{
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.25rem 1.1rem;
+  border-radius: 18px;
+  background: var(--pp-card);
+  border: 1px solid var(--pp-border);
+  box-shadow: 0 18px 60px rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+}
+
+tw-passage > *:first-child{
+  margin-top: 0;
+}
+
+/* Make links look like delightful buttons */
+tw-link, .enchantment-link{
+  display:inline-block;
+  padding: .55rem .9rem;
+  margin: .25rem .15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  text-decoration:none !important;
+  transform: translateY(0);
+  transition: transform .12s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+tw-link:hover, .enchantment-link:hover{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 10px 30px rgba(0,0,0,.28);
+  transform: translateY(-1px);
+}
+
+tw-link:active, .enchantment-link:active{
+  transform: translateY(0px) scale(.98);
+}
+
+/* Small “terminal tag” */
+.pp-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.35rem .65rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.25);
+  font-size:.9rem;
+  letter-spacing:.02em;
+}
+
+.pp-title{
+  font-size: 2.1rem;
+  line-height: 1.15;
+  margin: .1rem 0 .8rem 0;
+  text-shadow: 0 0 20px rgba(255,123,208,.22);
+}
+
+.pp-glow{
+  background: linear-gradient(90deg, var(--pp-accent), var(--pp-accent2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color: transparent;
+}
+
+.pp-sub{
+  opacity:.88;
+  font-size: 1.05rem;
+}
+
+.pp-divider{
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+  margin: 1rem 0;
+}
+
+.pp-hud{
+  position:fixed;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  pointer-events:none;
+  z-index: 9999;
+}
+
+.pp-hud > *{ pointer-events:auto; }
+
+.pp-btn{
+  cursor:pointer;
+  user-select:none;
+}
+
+.pp-modal{
+  position: fixed;
+  inset: 0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index: 10000;
+  background: rgba(0,0,0,.55);
+}
+
+.pp-modal.open{ display:flex; }
+
+.pp-modal .pp-modal-card{
+  width:min(720px, 92vw);
+  border-radius: 18px;
+  background: rgba(15,10,25,.82);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 20px 70px rgba(0,0,0,.7);
+  backdrop-filter: blur(10px);
+  padding: 1.1rem 1.1rem 1rem;
+}
+
+.pp-modal h3{
+  margin:.25rem 0 .5rem;
+}
+
+.pp-modal .pp-close{
+  float:right;
+  padding:.35rem .6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  cursor:pointer;
+}
+
+.pp-audio{
+  width: 100%;
+  margin-top: .6rem;
+}
+
+.pp-toast{
+  position:fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,255,255,.16);
+  padding: .55rem .8rem;
+  border-radius: 999px;
+  font-size: .95rem;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 10001;
+}
+
+.pp-toast.show{
+  opacity:1;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+.pp-float{
+  position: fixed;
+  font-size: 18px;
+  pointer-events:none;
+  z-index: 10002;
+  animation: ppFloatUp .9s ease-out forwards;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+}
+
+@keyframes ppFloatUp{
+  from{ transform: translate(-50%, -50%) scale(.9); opacity: 0 }
+  20%{ opacity: 1 }
+  to{ transform: translate(-50%, -140%) scale(1.15); opacity: 0 }
+}
+
+.pp-route{
+  text-transform: uppercase;
+  font-size: .75rem;
+  letter-spacing: .14em;
+  opacity:.85;
+}
+</style><script role="script" id="twine-user-script" type="text/twine-javascript">
+/* Penguin Protocol enhancements (Harlowe) */
+(function () {
+  const PP = {
+    audio: null,
+    playlist: [
+      // Put your own audio files in /assets and update these paths.
+      // Keep them royalty-free or your own uploads.
+      { title: "Penguin Protocol (Lo‑fi Intro)", src: "assets/lofi-intro.mp3", note: "Warm intro vibe." },
+      { title: "Sunset Route (Ambient)", src: "assets/sunset-ambient.mp3", note: "Golden-hour glow." },
+      { title: "Chai Route (Cozy)", src: "assets/chai-cozy.mp3", note: "Cozy + playful." },
+      { title: "Movie Route (Cinematic)", src: "assets/cinematic.mp3", note: "Main-character energy." }
+    ],
+    current: 0
+  };
+
+  function el(tag, attrs = {}, children = []) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") n.className = v;
+      else if (k === "html") n.innerHTML = v;
+      else if (k.startsWith("on") && typeof v === "function") n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v);
+    }
+    for (const c of children) n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    return n;
+  }
+
+  function toast(msg) {
+    let t = document.querySelector(".pp-toast");
+    if (!t) {
+      t = el("div", { class: "pp-toast" });
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._ppTimer);
+    t._ppTimer = setTimeout(() => t.classList.remove("show"), 1200);
+  }
+
+  function floatEmoji(x, y, emoji) {
+    const f = el("div", { class: "pp-float", html: emoji });
+    f.style.left = x + "px";
+    f.style.top = y + "px";
+    document.body.appendChild(f);
+    setTimeout(() => f.remove(), 900);
+  }
+
+  function getVar(name) {
+    try {
+      return window.State && State.variables ? State.variables[name] : undefined;
+    } catch (e) { return undefined; }
+  }
+
+  function setThemeByRoute() {
+    const route = getVar("route");
+    const story = document.querySelector("tw-story");
+    if (!story) return;
+    story.dataset.route = route || "";
+    if (route === "chai") {
+      story.style.setProperty("--pp-accent", "#ffb36b");
+      story.style.setProperty("--pp-accent2", "#ff7bd0");
+    } else if (route === "sunset") {
+      story.style.setProperty("--pp-accent", "#ff7bd0");
+      story.style.setProperty("--pp-accent2", "#ffd36b");
+    } else if (route === "movie") {
+      story.style.setProperty("--pp-accent", "#5fe1ff");
+      story.style.setProperty("--pp-accent2", "#b26bff");
+    } else {
+      story.style.removeProperty("--pp-accent");
+      story.style.removeProperty("--pp-accent2");
+    }
+  }
+
+  function ensureHUD() {
+    if (document.querySelector(".pp-hud")) return;
+
+    const left = el("div", { class: "pp-chip" }, [
+      el("span", { class: "pp-route", id: "ppRoute" }, ["PENGUIN PROTOCOL"]),
+      el("span", { style: "opacity:.7" }, ["•"]),
+      el("span", { id: "ppKeys" }, ["keys: 0"])
+    ]);
+
+    const right = el("div", { style: "display:flex; gap:.5rem; align-items:center;" }, [
+      el("div", { class: "pp-chip pp-btn", id: "ppMusicBtn", title: "Music" }, ["🎧 Music"]),
+      el("div", { class: "pp-chip pp-btn", id: "ppLoreBtn", title: "What is this?" }, ["✨ Lore"])
+    ]);
+
+    const hud = el("div", { class: "pp-hud" }, [left, right]);
+    document.body.appendChild(hud);
+
+    const modal = el("div", { class: "pp-modal", id: "ppModal" }, [
+      el("div", { class: "pp-modal-card" }, [
+        el("button", { class: "pp-close", id: "ppClose" }, ["Close"]),
+        el("div", { id: "ppModalBody" }, [])
+      ])
+    ]);
+    document.body.appendChild(modal);
+
+    document.getElementById("ppClose").addEventListener("click", () => modal.classList.remove("open"));
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("open"); });
+
+    document.getElementById("ppLoreBtn").addEventListener("click", () => {
+      const body = document.getElementById("ppModalBody");
+      body.innerHTML = `
+        <h3 class="pp-glow">Penguin Protocol</h3>
+        <div class="pp-sub">A dangerously unserious mission that slowly becomes suspiciously romantic.</div>
+        <div class="pp-divider"></div>
+        <div><b>Pro tip:</b> click choices like you’re directing a tiny rom‑com.</div>
+      `;
+      modal.classList.add("open");
+    });
+
+    document.getElementById("ppMusicBtn").addEventListener("click", () => openMusic());
+  }
+
+  function openMusic() {
+    const modal = document.getElementById("ppModal");
+    const body = document.getElementById("ppModalBody");
+    if (!modal || !body) return;
+
+    body.innerHTML = `<h3 class="pp-glow">Songs</h3>
+      <div class="pp-sub">Add your own audio files in <code>assets/</code> (mp3/ogg) and update the playlist in Story JavaScript.</div>
+      <div class="pp-divider"></div>
+      <div id="ppPlaylist"></div>
+      <audio class="pp-audio" id="ppAudio" controls preload="none"></audio>
+      <div class="pp-sub" id="ppTrackNote" style="margin-top:.4rem;"></div>
+    `;
+
+    const list = body.querySelector("#ppPlaylist");
+    const audio = body.querySelector("#ppAudio");
+    const note = body.querySelector("#ppTrackNote");
+    PP.audio = audio;
+
+    PP.playlist.forEach((t, i) => {
+      const row = el("div", { style: "display:flex; justify-content:space-between; gap:.6rem; align-items:center; margin:.35rem 0; padding:.35rem .5rem; border:1px solid rgba(255,255,255,.12); border-radius:12px; background: rgba(255,255,255,.04);" }, [
+        el("div", { style: "flex:1;" }, [
+          el("div", { style: "font-weight:700;" }, [t.title]),
+          el("div", { class: "pp-sub" }, [t.src])
+        ]),
+        el("div", { class: "pp-chip pp-btn" , title: "Play" }, [ "▶︎" ])
+      ]);
+      row.lastChild.addEventListener("click", () => {
+        PP.current = i;
+        audio.src = t.src;
+        note.textContent = t.note || "";
+        audio.play().then(() => toast("Playing: " + t.title))
+          .catch(() => toast("Tap play ▶︎ (browser blocked autoplay)"));
+      });
+      list.appendChild(row);
+    });
+
+    const route = getVar("route");
+    const pick = route === "chai" ? 2 : route === "sunset" ? 1 : route === "movie" ? 3 : 0;
+    PP.current = pick;
+    audio.src = PP.playlist[pick].src;
+    note.textContent = PP.playlist[pick].note || "";
+
+    modal.classList.add("open");
+  }
+
+  function updateHUD() {
+    const keys = getVar("keys");
+    const route = getVar("route");
+    const rEl = document.getElementById("ppRoute");
+    const kEl = document.getElementById("ppKeys");
+    if (rEl) rEl.textContent = route ? ("route: " + route) : "PENGUIN PROTOCOL";
+    if (kEl) kEl.textContent = "keys: " + (typeof keys === "number" ? keys : 0);
+  }
+
+  function hookLinkEffects() {
+    const story = document.querySelector("tw-story");
+    if (!story) return;
+
+    story.addEventListener("click", (e) => {
+      const link = e.target.closest("tw-link");
+      if (!link) return;
+      const rect = link.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const emoji = ["💗","✨","🐧","🌅","🧋","🎬"][Math.floor(Math.random()*6)];
+      floatEmoji(x, y, emoji);
+    }, { passive: true });
+  }
+
+  function observePassages() {
+    const story = document.querySelector("tw-story");
+    if (!story) return;
+    const obs = new MutationObserver(() => {
+      setThemeByRoute();
+      updateHUD();
+      injectStartExtras();
+    });
+    obs.observe(story, { childList: true, subtree: true });
+  }
+
+  function injectStartExtras() {
+    const passage = document.querySelector("tw-passage");
+    if (!passage) return;
+    const name = passage.getAttribute("name");
+    if (name !== "Start") return;
+
+    if (!passage.querySelector(".pp-hero")) {
+      const hero = el("div", { class: "pp-hero" }, [
+        el("div", { class: "pp-chip" }, ["🕵️‍♂️ Mission: Find the Teacher"]),
+        el("div", { class: "pp-title pp-glow" }, ["Penguin Protocol"]),
+        el("div", { class: "pp-sub" }, ["A tiny interactive story that starts as a joke… and ends as a date plan."])
+      ]);
+      passage.prepend(hero);
+
+      const shortcuts = el("div", { style:"display:flex; gap:.5rem; flex-wrap:wrap; margin:.6rem 0 .25rem;" }, [
+        el("span", { class:"pp-chip pp-btn", id:"ppQuickMusic" }, ["🎧 Songs"]),
+        el("span", { class:"pp-chip pp-btn", id:"ppFullscreen" }, ["⛶ Fullscreen"])
+      ]);
+      passage.insertBefore(shortcuts, passage.children[1] || null);
+
+      shortcuts.querySelector("#ppQuickMusic").addEventListener("click", () => openMusic());
+      shortcuts.querySelector("#ppFullscreen").addEventListener("click", () => {
+        const elDoc = document.documentElement;
+        if (document.fullscreenElement) document.exitFullscreen();
+        else (elDoc.requestFullscreen || elDoc.webkitRequestFullscreen || elDoc.msRequestFullscreen).call(elDoc);
+      });
+    }
+  }
+
+  function init() {
+    ensureHUD();
+    hookLinkEffects();
+    observePassages();
+    setTimeout(() => { setThemeByRoute(); updateHUD(); injectStartExtras(); }, 150);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script><tw-passagedata pid="1" name="startup" tags="" position="225,125" size="100,100">(set: $name to &quot;Penguin&quot;)
 (set: $route to &quot;&quot;)
 (set: $cringe to 0)
 (set: $keys to 0)
-(set: $plan to &quot;&quot;)</tw-passagedata><tw-passagedata pid="2" name="Start" tags="" position="425,175" size="100,100">Booting…
+(set: $plan to &quot;&quot;)</tw-passagedata><tw-passagedata pid="2" name="Start" tags="" position="425,175" size="100,100"><span class="pp-chip">Booting…</span>
 
-&#39;&#39;PENGUIN PROTOCOL v1.0&#39;&#39;
+<span class="pp-title pp-glow">PENGUIN PROTOCOL v1.1</span>
 
-You have been selected for a top-secret mission.
+<span class="pp-sub">You have been selected for a top‑secret mission.</span>
+
+<div class="pp-divider"></div>
 
 Objective:
-&#39;&#39;Find the Teacher.&#39;&#39;
+''Find the Teacher.''
 
 A rumor says… when $name blushes, she kicks her legs in the air.
 Science must verify this.
 
 [[Begin the highly serious investigation-&gt;BlushDetector]]
+
+(link: "🎧 Open songs &amp; vibes")[ [[Go-&gt;Songs]] ]
 
 //Warning: contains intentional cringe. Self-aware cringe.//</tw-passagedata><tw-passagedata pid="3" name="choose vibe" tags="" position="425,300" size="100,100">&#39;&#39;MISSION UPDATE:&#39;&#39; The Teacher can be lured using one of three sacred rituals.
 
@@ -291,8 +748,7 @@ For science. Obviously.
   [[Proceed like a totally normal person-&gt;choose vibe]]
 
   ]
-]</tw-passagedata><tw-passagedata pid="9" name="test" tags="" position="100,350" size="100,100">Hello Penguin.
-[[Go-&gt;Start]]</tw-passagedata><tw-passagedata pid="10" name="swift bridge" tags="" position="300,550" size="100,100">&#39;&#39;SWIFT BRIDGE&#39;&#39;
+]</tw-passagedata><tw-passagedata pid="10" name="swift bridge" tags="" position="300,550" size="100,100">&#39;&#39;SWIFT BRIDGE&#39;&#39;
 
 Okay. This is the part of the song where everything gets honest.
 The dramatic build-up.
@@ -334,7 +790,19 @@ A line appears on the screen like an easter egg.
     Not yet. You need a little more build-up first.
     Tap the beat a couple more times. 🙂
   ]
-]</tw-passagedata></tw-storydata>
+]</tw-passagedata><tw-passagedata pid="11" name="Songs" tags="" position="725,125" size="100,100">&#39;&#39;SONGS&#39;&#39;
+
+This page uses a built-in music panel (so it looks pretty on every screen).
+
+(link: &quot;Open the music panel 🎧&quot;)[
+  (run: (print: &quot;&quot;))
+]
+
+Tip: you can also tap the **🎧 Music** button at the top any time.
+
+---
+[[Back-&gt;Start]]</tw-passagedata>
+</tw-storydata>
 <script title="Twine engine code" data-main="harlowe">(function(){"use strict";
 var require,define;!function(){var e={},r={};require=function(i){var n=e[i];return n&&(r[i]=n[1].apply(void 0,n[0].map(require)),e[i]=void 0),r[i]},(define=function(r,i,n){if("function"==typeof r)return r();e[r]=[i,n]}).amd=!0}();/*!
  * https://github.com/paulmillr/es6-shim
